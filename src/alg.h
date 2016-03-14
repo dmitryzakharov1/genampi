@@ -11,8 +11,8 @@ using namespace std;
 // 
 //  Change any of these parameters to match your needs 
 //
-# define POPSIZE 8000
-# define MAXGENS 1000
+# define POPSIZE 1000//8000
+# define MAXGENS 500//1000
 # define NVARS 3
 # define PXOVER 0.8
 # define PMUTATION 0.15

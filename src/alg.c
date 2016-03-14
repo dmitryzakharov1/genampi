@@ -1,7 +1,6 @@
 #include "alg.h"
 
 int main(int argc, char **argv) {
-	string filename = "simple_ga_input.txt";
 	int generation;
 	int i;
 	int seed;
@@ -13,9 +12,9 @@ int main(int argc, char **argv) {
    MPI_Init(&argc, &argv);
    MPI_Comm_size(MPI_COMM_WORLD, &size);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-   printf ("process %d, size %d\n", rank, size);
-	cout << "Start CPU code\n";
+//   printf ("process %d, size %d\n", rank, size);
 
+	if(rank==0) {
 	//проверка на количество неизвестных
 	if (NVARS < 2)
 	{
@@ -24,8 +23,11 @@ int main(int argc, char **argv) {
 	}
 
 	cout << "POPSIZE=" << POPSIZE << "\n";
+	}
 
-	seed = 123456789;
+	//seed = 123456789;
+	seed = abs(12345 * abs(rand()) + rank*abs(rand()));
+	//cout << "seed=" << seed << "\n";
 
 	initialize(seed);
 
@@ -43,27 +45,26 @@ int main(int argc, char **argv) {
 		elitist();
 	}
 
-	cout << "\n";
-	cout << "  Best member after " << MAXGENS << " generations:\n";
-	cout << "\n";
+	cout << "Rank: "<< rank;
+	cout << "  Best member after " << MAXGENS << " generations: ";
+	//cout << "\n";
 
 	for (i = 0; i < NVARS; i++)
 	{
-		cout << "  var(" << i << ") = " << population[POPSIZE].gene[i] << "\n";
+		cout << " var(" << i << ") = " << population[POPSIZE].gene[i];
 	}
 
-	cout << "\n";
-	cout << "  Best fitness = " << population[POPSIZE].fitness << "\n";
+	//cout << "\n";
+	cout << " Best fitness = " << population[POPSIZE].fitness << " ";
 	//
 	//  «авершение
 	//
 
-	MPI_Finalize();
-	cout << "End of CPU code\n";
 	//timestamp();
-	printf("CPU time: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
+    cout << "CPU time: " << (double)(clock() - tStart) / CLOCKS_PER_SEC << "\n";
+//	printf("Rank %d CPU time: %.2fs\n", rank, (double)(clock() - tStart) / CLOCKS_PER_SEC);
 
-	//End of CPU
+	MPI_Finalize();
 	return 0;
 }
 
@@ -83,7 +84,6 @@ void crossover(int &seed)
 	int one;
 	int first = 0;
 	double x;
-
 
 
 	for (mem = 0; mem < POPSIZE; ++mem)
@@ -128,6 +128,7 @@ void elitist()
 
 	best = population[0].fitness;
 	worst = population[0].fitness;
+
 
 	for (i = 0; i < POPSIZE - 1; ++i)
 	{
