@@ -45,7 +45,7 @@ void crossover(int &seed);
 void elitist();
 void evaluate();
 int i4_uniform_ab(int a, int b, int &seed);
-void initialize(string filename, int &seed);
+void initialize(int &seed);
 void keep_the_best();
 void mutate(int &seed);
 double r8_uniform_ab(double a, double b, int &seed);

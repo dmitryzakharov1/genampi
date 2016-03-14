@@ -1,8 +1,6 @@
 #include "alg.h"
 
 int main(int argc, char **argv) {
-	
-	
 	string filename = "simple_ga_input.txt";
 	int generation;
 	int i;
@@ -16,7 +14,6 @@ int main(int argc, char **argv) {
    MPI_Comm_size(MPI_COMM_WORLD, &size);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
    printf ("process %d, size %d\n", rank, size);
-	
 	cout << "Start CPU code\n";
 
 	//проверка на количество неизвестных
@@ -30,7 +27,7 @@ int main(int argc, char **argv) {
 
 	seed = 123456789;
 
-	initialize(filename, seed);
+	initialize(seed);
 
 	evaluate();
 
@@ -62,15 +59,12 @@ int main(int argc, char **argv) {
 	//
 
 	MPI_Finalize();
-	
 	cout << "End of CPU code\n";
 	//timestamp();
 	printf("CPU time: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 
 	//End of CPU
-	
 	return 0;
-	
 }
 
 void crossover(int &seed)
@@ -270,7 +264,7 @@ int i4_uniform_ab(int a, int b, int &seed)
 }
 
 
-void initialize(string filename, int &seed)
+void initialize(int &seed)
 
 //****************************************************************************80
 // 
@@ -281,37 +275,25 @@ void initialize(string filename, int &seed)
 //	нижн¤¤_граница   верхн¤¤_граница
 {
 	int i;
-	ifstream input;
 	int j;
-	double lbound;
-	double ubound;
 
-	input.open(filename.c_str());
+	int ii=0;
 
-	if (!input)
-	{
-		cerr << "\n";
-		cerr << "INITIALIZE - Fatal error!\n";
-		cerr << "  Cannot open the input file!\n";
-		exit(1);
-	}
+	double input[3][2] =  {{0.0, 5.0}, {0.0, 5.0}, {-2.0, 2.0}};
 
 	for (i = 0; i < NVARS; i++)
 	{
-		input >> lbound >> ubound;
-
 		for (j = 0; j < POPSIZE; j++)
 		{
 			population[j].fitness = 0;
 			population[j].rfitness = 0;
 			population[j].cfitness = 0;
-			population[j].lower[i] = lbound;
-			population[j].upper[i] = ubound;
-			population[j].gene[i] = r8_uniform_ab(lbound, ubound, seed);
+			population[j].lower[i] = input[ii][0];
+			population[j].upper[i] = input[ii][1];
+			population[j].gene[i] = r8_uniform_ab(input[ii][0], input[ii][1], seed);
 		}
+	ii++;
 	}
-
-	input.close();
 
 	return;
 }
